@@ -6,8 +6,8 @@
 ## Table of Contents
 - [Introduction](#introduction)
 - [Requirements](#requirements)
-- [Features](#features)
 - [Installation](#installation)
+- [Features](#features)
 - [Configuration Options](#configuration-options)
 - [Usage](#usage)
     - [Basic Console Logging](#basic-console-logging)
@@ -17,19 +17,36 @@
     - [Graylog Integration](#graylog-integration)
     - [AWS CloudWatch Integration](#aws-cloudwatch-integration)
     - [Mixing it all together](#mixing-it-all-together)
-- [Testing](#testing)
 
 ## Introduction
 APV emerged from a simple observation: despite the abundance of logging solutions, there's a glaring lack of standardization in application logging. As a developer deeply entrenched in Elasticsearch, AWS, and Graylog ecosystems, I found myself repeatedly grappling with inconsistent log formats and cumbersome integrations. APV is my response to this challenge – a logging library that doesn't aim to revolutionize the field, but rather to streamline it.
 
-This project is rooted in pragmatism. It offers a clean, efficient approach to generating logs that are both human-readable and machine-parseable. APV isn't about reinventing logging; it's about refining it. It provides a unified interface that plays well with various logging backends, from local files to cloud services, without sacrificing flexibility or performance.
-
-While there's no shortage of logging libraries out there, APV represents a distillation of best practices I've encountered and challenges I've overcome. It's designed for developers who appreciate clean, consistent logs and seamless integration with modern logging infrastructures. If you're tired of wrestling with logging inconsistencies in production environments, APV might just be the solution you didn't know you were looking for.
-
 ## Requirements
-- [Python 3.10+](https://www.python.org/)
-    - [boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html) *(Optional: for CloudWatch logging)*
-    - [ecs-logging](https://github.com/aws-observability/aws-ecs-logging) *(Optional: for ECS logging)*
+- Python 3.10+
+
+## Installation
+
+### From PyPI
+```bash
+# Basic installation
+pip install apv
+
+# With CloudWatch support
+pip install apv[cloudwatch]
+
+# With ECS logging support
+pip install apv[ecs]
+
+# With all optional dependencies
+pip install "apv[cloudwatch,ecs]"
+```
+
+### From Source
+```bash
+git clone https://github.com/acidvegas/apv
+cd apv
+pip install .
+```
 
 ## Features
 - **Console Logging with Colors**: Enhanced readability with colored log messages in the console.
@@ -41,55 +58,6 @@ While there's no shortage of logging libraries out there, APV represents a disti
 - **Graylog Integration**: Send logs to a [Graylog](https://www.graylog.org/) server using GELF over UDP.
 - **AWS CloudWatch Integration**: Send logs to [AWS CloudWatch Logs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html).
 - **Customizable Logging Levels**: Set the logging level to control verbosity.
-
-## Installation
-To install APV, you can use the provided `setup.py` script:
-
-1. **Clone the repository or download the source code.**
-
-   ```bash
-   git clone https://github.com/acidvegas/apv.git
-   ```
-
-2. **Navigate to the project directory.**
-
-   ```bash
-   cd apv
-   ```
-
-3. **Install the package using `setup.py`.**
-
-   ```bash
-   python setup.py install
-   ```
-
-   - **With CloudWatch support:**
-
-     If you plan to use AWS CloudWatch logging, install with the `cloudwatch` extra:
-
-     ```bash
-     pip install .[cloudwatch]
-     ```
-
-   - **Alternatively, install `boto3` separately:**
-
-     ```bash
-     pip install boto3
-     ```
-
-   - **With ECS support:**
-
-     If you plan to use ECS logging, install with the `ecs` extra:
-
-     ```bash
-     pip install .[ecs]
-     ```
-
-     - **Alternatively, install `ecs-logging` separately:**
-
-       ```bash
-       pip install ecs-logging
-       ```
 
 ## Configuration Options
 
@@ -219,7 +187,7 @@ logging.info('This message will be sent to AWS CloudWatch.')
 import logging
 import apv
 
-# Set up logging to AWS CloudWatch Logs
+# Set up ECS logging
 apv.setup_logging(
     level='INFO',
     ecs_log=True
@@ -251,12 +219,6 @@ apv.setup_logging(
 )
 ```
 
-## Testing
+---
 
-To run the test suite, use the following command:
-
-```bash
-python unittest.py
-```
-
-The test suite will run all the tests and provide output for each test.
+###### Mirrors: [acid.vegas](https://git.acid.vegas/apv) • [SuperNETs](https://git.supernets.org/acidvegas/apv) • [GitHub](https://github.com/acidvegas/apv) • [GitLab](https://gitlab.com/acidvegas/apv) • [Codeberg](https://codeberg.org/acidvegas/apv)
