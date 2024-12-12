@@ -4,6 +4,9 @@
 
 import logging
 import logging.handlers
+import sys
+
+sys.stdout.reconfigure(encoding='utf-8')
 
 class LoggerSetup:
     def __init__(self, level='INFO', date_format='%Y-%m-%d %H:%M:%S',
