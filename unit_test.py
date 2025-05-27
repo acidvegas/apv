@@ -10,7 +10,7 @@ import time
 
 sys.dont_write_bytecode = True # FUCKOFF __pycache__
 
-import apv.apv as apv
+import apv
 
 
 def test_console_logging():
