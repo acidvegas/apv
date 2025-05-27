@@ -1,4 +1,3 @@
-from .apv import * 
-
-__version__ = '1.0.4'
-__author__ = 'acidvegas' 
+#!/usr/bin/env python3
+# Advanced Python Logging - Developed by acidvegas in Python (https://git.acid.vegas/apv)
+# apv/__init__.py

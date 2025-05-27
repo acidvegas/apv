@@ -4,12 +4,13 @@
 
 from setuptools import setup, find_packages
 
+
 with open('README.md', 'r', encoding='utf-8') as fh:
 	long_description = fh.read()
 
 setup(
     name='apv',
-    version='1.0.4',
+    version='4.0.0',
     description='Advanced Python Logging',
     author='acidvegas',
     author_email='acid.vegas@acid.vegas',
@@ -25,10 +26,6 @@ setup(
     install_requires=[
         # No required dependencies for basic functionality
     ],
-    extras_require={
-        'cloudwatch': ['boto3'],
-        'ecs' : ['ecs-logging'],
-    },
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: ISC License (ISCL)',

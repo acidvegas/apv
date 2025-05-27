@@ -1,95 +1,95 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 # Advanced Python Logging - Developed by acidvegas in Python (https://git.acid.vegas/apv)
-# unittest.py
+# unit_test.py
 
 import logging
+import os
 import random
+import sys
 import time
 
-# prevent bytecode files (.pyc) from being written
-from sys import dont_write_bytecode
-dont_write_bytecode = True
+sys.dont_write_bytecode = True # FUCKOFF __pycache__
 
-import apv
+import apv.apv as apv
 
-# Test console logging with custom date format
-apv.setup_logging(level='DEBUG', date_format='%H:%M:%S')
-logging.debug('Testing debug message in console.')
-logging.info('Testing info message in console.')
-logging.warning('Testing warning message in console.')
-logging.error('Testing error message in console.')
-logging.critical('Testing critical message in console.')
 
-print()
+def test_console_logging():
+	'''Test basic console logging functionality'''
 
-# Test console logging with details
-time.sleep(2)
-apv.setup_logging(level='DEBUG', date_format='%Y-%m-%d %H:%M:%S', show_details=True)
-logging.debug('Testing debug message in console with details.')
-logging.info('Testing info message in console with details.')
-logging.warning('Testing warning message in console with details.')
-logging.error('Testing error message in console with details.')
-logging.critical('Testing critical message in console with details.')
+	print('\nTesting Console Logging...')
+	apv.setup_logging(level='DEBUG', date_format='%H:%M:%S')
+	for level in ['debug', 'info', 'warning', 'error', 'critical']:
+		getattr(logging, level)(f'Testing {level} message in console.')
+	time.sleep(1)
 
-print()
 
-# Test disk logging with JSON and regular rotation
-logging.debug('Starting test: Disk logging with JSON and regular rotation...')
-time.sleep(2)
-apv.setup_logging(level='DEBUG', log_to_disk=True, max_log_size=1024, max_backups=3, log_file_name='json_log', json_log=True, show_details=True)
-for i in range(100):
-    log_level = random.choice([logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL])
-    logging.log(log_level, f'Log entry {i+1} for JSON & regular rotation test.')
-    time.sleep(0.1)
+def test_json_console_logging():
+	'''Test JSON console logging'''
 
-print()
+	print('\nTesting JSON Console Logging...')
+	apv.setup_logging(level='DEBUG', date_format='%H:%M:%S', json_log=True, log_to_disk=False)
+	logging.info('Test JSON console message with custom field', extra={'_custom_field': 'test value'})
+	logging.warning('Test JSON console warning with error', exc_info=Exception('Test error'))
+	time.sleep(1)
 
-# Test disk logging with rotation & compression
-logging.debug('Starting test: Disk logging with rotation & compression...')
-time.sleep(2)
-apv.setup_logging(level='DEBUG', log_to_disk=True, max_log_size=1024, max_backups=3, log_file_name='plain_log', show_details=True, compress_backups=True)
-for i in range(100):
-    log_level = random.choice([logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL])
-    logging.log(log_level, f'Log entry {i+1} for disk rotation & compression test.')
-    time.sleep(0.1)
 
-logging.info('Test completed. Check the logs directory for disk logging & JSON logging tests.')
+def test_detailed_logging():
+	'''Test console logging with details'''
 
-print()
+	print('\nTesting Detailed Logging...')
+	apv.setup_logging(level='DEBUG', show_details=True)
+	for level in ['debug', 'info', 'warning', 'error', 'critical']:
+		getattr(logging, level)(f'Testing {level} message with details.')
+	time.sleep(1)
 
-try:
-    import ecs_logging
-except ImportError:
-    pass
-else:
-    # Test ECS logging
-    logging.debug('Starting test: ECS logging...')
-    time.sleep(2)
-    apv.setup_logging(level='DEBUG', ecs_log=True)
-    logging.debug('This is a test log message to ECS.')
-    logging.info('This is a test log message to ECS.')
-    logging.warning('This is a test log message to ECS.')
-    logging.error('This is a test log message to ECS.')
-    logging.critical('This is a test log message to ECS.')
 
-print()
+def test_file_logging():
+	'''Test file logging with rotation'''
 
-# Test Graylog handler (Uncomment & configure to test)
-# logging.debug('Starting test: Graylog handler...')
-# time.sleep(2)
-# apv.setup_logging(level='DEBUG', enable_graylog=True, graylog_host='your_graylog_host', graylog_port=12201)
-# logging.debug('This is a test log message to Graylog.')
-# logging.info('This is a test log message to Graylog.')
-# logging.warning('This is a test log message to Graylog.')
-# logging.error('This is a test log message to Graylog.')
-# logging.critical('This is a test log message to Graylog.')
+	print('\nTesting File Logging...')
+	log_file = 'logs/test_log.log'
+	apv.setup_logging(level='DEBUG', log_to_disk=True, max_log_size=1024, max_backups=3, log_file_name='test_log')
+	for i in range(50):
+		level = random.choice(['debug', 'info', 'warning', 'error', 'critical'])
+		getattr(logging, level)(f'File logging test message {i}')
+	
+	assert os.path.exists(log_file), "Log file was not created"
+	time.sleep(1)
 
-# Test CloudWatch handler (Uncomment & configure to test)
-# logging.debug('Starting test: CloudWatch handler...')
-# time.sleep(2)
-# apv.setup_logging(level='DEBUG', enable_cloudwatch=True, cloudwatch_group_name='your_log_group', cloudwatch_stream_name='your_log_stream')
-# logging.debug('This is a test log message to CloudWatch.')
-# logging.info('This is a test log message to CloudWatch.')
-# logging.warning('This is a test log message to CloudWatch.')
-# logging.error('This is a test log message to CloudWatch.')
-# logging.critical('This is a test log message to CloudWatch.')
+
+def test_json_logging():
+	'''Test JSON format logging'''
+
+	print('\nTesting JSON Logging...')
+	apv.setup_logging(level='DEBUG', log_to_disk=True, log_file_name='json_test', json_log=True)
+	logging.info('Test JSON formatted log message')
+	assert os.path.exists('logs/json_test.json'), "JSON log file was not created"
+	time.sleep(1)
+
+
+def test_compressed_logging():
+	'''Test compressed log files'''
+
+	print('\nTesting Compressed Logging...')
+	apv.setup_logging(level='DEBUG', log_to_disk=True, max_log_size=512, max_backups=2, log_file_name='compressed_test', compress_backups=True)
+	for i in range(100):
+		logging.info(f'Testing compression message {i}')
+	time.sleep(1)
+	# Check for .gz files
+	gz_files = [f for f in os.listdir('logs') if f.startswith('compressed_test') and f.endswith('.gz')]
+	assert len(gz_files) > 0, 'No compressed log files were created'
+
+
+if __name__ == '__main__':
+	# Create logs directory if it doesn't exist
+	os.makedirs('logs', exist_ok=True)
+	
+	# Run all tests
+	test_console_logging()
+	test_json_console_logging()
+	test_detailed_logging()
+	test_file_logging()
+	test_json_logging()
+	test_compressed_logging()
+
+	print('\nAll tests completed successfully!')
