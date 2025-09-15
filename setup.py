@@ -26,6 +26,8 @@ setup(
     install_requires=[
         # No required dependencies for basic functionality
     ],
+    license='ISC',
+    license_files=['LICENSE'],
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: ISC License (ISCL)',
