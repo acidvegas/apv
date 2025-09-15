@@ -10,7 +10,7 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 
 setup(
     name='apv',
-    version='4.0.1',
+    version='4.2.0',
     description='Advanced Python Logging',
     author='acidvegas',
     author_email='acid.vegas@acid.vegas',

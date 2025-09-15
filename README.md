@@ -20,7 +20,7 @@
 APV emerged from a simple observation: despite the abundance of logging solutions, there's a glaring lack of standardization in application logging. APV is my response to this challenge – a logging library that doesn't aim to revolutionize the field, but rather to streamline it.
 
 ## Requirements
-- Python 3.10+
+- Python 3
 
 ## Installation
 
@@ -41,6 +41,7 @@ pip install .
 - **File Logging**: Write logs to files with support for log rotation based on size and number of backups.
 - **Log Compression**: Automatically compress old log files using gzip to save disk space.
 - **JSON Logging**: Output logs in JSON format for better structure and integration with log management systems.
+- **Syslog Capabilities**: Out logs (optionally in JSON) to the machines syslog.
 - **Detailed Log Messages**: Option to include module name, function name, and line number in log messages.
 
 ## Configuration Options
@@ -58,6 +59,7 @@ The `setup_logging` function accepts the following keyword arguments to customiz
 | `json_log`        | `False`                  | Whether to log in JSON format.                                                |
 | `show_details`    | `False`                  | Whether to include module name, function name, & line number in log messages. |
 | `compress_backups`| `False`                  | Whether to compress old log files using gzip.                                 |
+| `syslog`          | `False`                  | Whether to send logs to syslog.                                               |
 
 ## Usage
 
@@ -124,6 +126,45 @@ apv.setup_logging(
 logging.debug('This is a debug message in JSON format.')
 ```
 
+### Syslog Logging
+
+```python
+import logging
+import apv
+
+# Set up syslog logging
+apv.setup_logging(level='INFO', syslog=True)
+
+logging.info('This message will be sent to syslog.')
+logging.error('Error messages are also sent to syslog.')
+```
+
+### Syslog Logging with JSON Format
+
+```python
+import logging
+import apv
+
+# Set up syslog logging with JSON format
+apv.setup_logging(level='DEBUG', syslog=True, json_log=True)
+
+logging.debug('This debug message will be sent to syslog in JSON format.')
+logging.info('Info messages are also sent as JSON to syslog.')
+```
+
+### Syslog Logging with Details
+
+```python
+import logging
+import apv
+
+# Set up syslog logging with detailed information
+apv.setup_logging(level='DEBUG', syslog=True, show_details=True)
+
+logging.debug('This debug message will include module, function, and line details in syslog.')
+```
+
+
 ### Mixing it all together
 
 ```python
@@ -139,7 +180,8 @@ apv.setup_logging(
     log_file_name='app',
     json_log=True,
     compress_backups=True,
-    show_details=True
+    show_details=True,
+    syslog=True
 )
 ```
 

@@ -9,6 +9,7 @@ import logging.handlers
 import os
 import socket
 import sys
+import syslog
 
 
 class LogColors:
@@ -117,7 +118,7 @@ class GZipRotatingFileHandler(logging.handlers.RotatingFileHandler):
 
 
 class LoggerSetup:
-    def __init__(self, level: str = 'INFO', date_format: str = '%Y-%m-%d %H:%M:%S', log_to_disk: bool = False, max_log_size: int = 10*1024*1024, max_backups: int = 7, log_file_name: str = 'app', json_log: bool = False, show_details: bool = False, compress_backups: bool = False):
+    def __init__(self, level: str = 'INFO', date_format: str = '%Y-%m-%d %H:%M:%S', log_to_disk: bool = False, max_log_size: int = 10*1024*1024, max_backups: int = 7, log_file_name: str = 'app', json_log: bool = False, show_details: bool = False, compress_backups: bool = False, syslog: bool = False):
         '''
         Initialize the LoggerSetup with provided parameters
         
@@ -130,6 +131,7 @@ class LoggerSetup:
         :param json_log: Whether to log in JSON format
         :param show_details: Whether to show detailed log messages
         :param compress_backups: Whether to compress old log files using gzip
+        :param syslog: Whether to send logs to syslog
         '''
 
         self.level            = level
@@ -141,6 +143,7 @@ class LoggerSetup:
         self.json_log         = json_log
         self.show_details     = show_details
         self.compress_backups = compress_backups
+        self.syslog           = syslog
 
 
     def setup(self):
@@ -159,6 +162,10 @@ class LoggerSetup:
         # Setup file handler if enabled
         if self.log_to_disk:
             self.setup_file_handler(level_num)
+
+        # Setup syslog handler if enabled
+        if self.syslog:
+            self.setup_syslog_handler(level_num)
 
 
     def setup_console_handler(self, level_num: int):
@@ -205,6 +212,34 @@ class LoggerSetup:
         file_handler.setFormatter(formatter)
 
         logging.getLogger().addHandler(file_handler)
+
+
+    def setup_syslog_handler(self, level_num: int):
+        '''
+        Set up the syslog handler
+        
+        :param level_num: The logging level number
+        '''
+
+        # Create the syslog handler
+        syslog_handler = logging.handlers.SysLogHandler()
+        syslog_handler.setLevel(level_num)
+        
+        # Use JSON formatter if json_log is enabled
+        if self.json_log:
+            syslog_formatter = JsonFormatter(datefmt=self.date_format)
+        else:
+            # Include details in syslog format when show_details is enabled
+            if self.show_details:
+                syslog_formatter = logging.Formatter(fmt='%(asctime)s ┃ %(levelname)-8s ┃ %(module)s ┃ %(funcName)s ┃ %(lineno)d ┃ %(message)s', datefmt=self.date_format)
+            else:
+                syslog_formatter = logging.Formatter(fmt='%(name)s: %(message)s')
+        
+        # Set the formatter
+        syslog_handler.setFormatter(syslog_formatter)
+        
+        # Add the handler to the root logger
+        logging.getLogger().addHandler(syslog_handler)
 
 
 def setup_logging(**kwargs):
